@@ -3,7 +3,7 @@
 require_relative 'lib/legion/extensions/social/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'legion-extensions-social'
+  spec.name          = 'lex-social'
   spec.version       = Legion::Extensions::Social::VERSION
   spec.authors       = ['Matthew Iverson']
   spec.email         = ['matt@legionIO.com']
@@ -17,4 +17,5 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
 
   spec.metadata['rubygems_mfa_required'] = 'true'
+  spec.add_development_dependency 'legion-gaia'
 end
