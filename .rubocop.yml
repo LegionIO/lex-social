@@ -22,6 +22,9 @@ Metrics/BlockLength:
   Exclude:
     - 'spec/**/*'
 
+Gemspec/DevelopmentDependencies:
+  Enabled: false
+
 Naming/PredicateMethod:
   Enabled: false
 

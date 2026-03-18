@@ -14,9 +14,12 @@ module Legion
           end
 
           def join_group(group_id:, role: :contributor, members: [])
+            return nil unless Constants::ROLES.include?(role)
+            return { error: :group_full } if members.size > Constants::MAX_GROUP_MEMBERS
+
             @groups[group_id] ||= {
               role:       role,
-              members:    members.dup,
+              members:    members.first(Constants::MAX_GROUP_MEMBERS),
               joined_at:  Time.now.utc,
               norms:      [],
               cohesion:   0.5,
@@ -71,13 +74,12 @@ module Legion
           end
 
           def record_reciprocity(agent_id:, action:, direction:)
-            @reciprocity_ledger << {
-              agent_id:  agent_id,
-              action:    action,
-              direction: direction,
-              at:        Time.now.utc
-            }
+            return nil unless Constants::RECIPROCITY_DIRECTIONS.include?(direction)
+
+            entry = { agent_id: agent_id, action: action, direction: direction, at: Time.now.utc }
+            @reciprocity_ledger << entry
             @reciprocity_ledger.shift while @reciprocity_ledger.size > Constants::RECIPROCITY_WINDOW
+            entry
           end
 
           def reciprocity_balance(agent_id)

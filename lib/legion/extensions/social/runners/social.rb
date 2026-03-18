@@ -24,6 +24,8 @@ module Legion
 
           def join_group(group_id:, role: :contributor, members: [], **)
             group = social_graph.join_group(group_id: group_id, role: role, members: members)
+            return { success: false, error: 'invalid role or group full' } if group.nil? || (group.is_a?(Hash) && group[:error])
+
             Legion::Logging.info "[social] joined group=#{group_id} role=#{role}"
             { success: true, group_id: group_id, role: role, group: group }
           end
@@ -58,7 +60,9 @@ module Legion
           end
 
           def record_exchange(agent_id:, action:, direction:, **)
-            social_graph.record_reciprocity(agent_id: agent_id, action: action, direction: direction.to_sym)
+            result = social_graph.record_reciprocity(agent_id: agent_id, action: action, direction: direction.to_sym)
+            return { success: false, error: 'invalid direction' } unless result
+
             Legion::Logging.debug "[social] exchange agent=#{agent_id} dir=#{direction}"
             { success: true }
           end

@@ -71,6 +71,9 @@ module Legion
           # Reciprocity tracking window
           RECIPROCITY_WINDOW = 50
 
+          # Valid reciprocity directions
+          RECIPROCITY_DIRECTIONS = %i[given received].freeze
+
           # Social influence decay rate
           INFLUENCE_DECAY = 0.02
         end

@@ -56,6 +56,23 @@ RSpec.describe Legion::Extensions::Social::Helpers::SocialGraph do
       expect(graph.groups[:alpha][:role]).to eq(:leader)
     end
 
+    it 'rejects invalid role' do
+      result = graph.join_group(group_id: :alpha, role: :dictator)
+      expect(result).to be_nil
+    end
+
+    it 'rejects members exceeding MAX_GROUP_MEMBERS' do
+      oversized = Array.new(Legion::Extensions::Social::Helpers::Constants::MAX_GROUP_MEMBERS + 1) { |i| "agent_#{i}" }
+      result = graph.join_group(group_id: :alpha, members: oversized)
+      expect(result[:error]).to eq(:group_full)
+    end
+
+    it 'accepts members at exactly MAX_GROUP_MEMBERS' do
+      exact = Array.new(Legion::Extensions::Social::Helpers::Constants::MAX_GROUP_MEMBERS) { |i| "agent_#{i}" }
+      graph.join_group(group_id: :alpha, members: exact)
+      expect(graph.groups[:alpha][:members].size).to eq(Legion::Extensions::Social::Helpers::Constants::MAX_GROUP_MEMBERS)
+    end
+
     it 'trims groups beyond MAX_GROUPS' do
       max = Legion::Extensions::Social::Helpers::Constants::MAX_GROUPS
       (max + 3).times { |i| graph.join_group(group_id: :"group_#{i}") }
@@ -172,6 +189,21 @@ RSpec.describe Legion::Extensions::Social::Helpers::SocialGraph do
     it 'tracks direction' do
       graph.record_reciprocity(agent_id: :a1, action: :helped, direction: :given)
       expect(graph.reciprocity_ledger.first[:direction]).to eq(:given)
+    end
+
+    it 'rejects invalid direction' do
+      result = graph.record_reciprocity(agent_id: :a1, action: :helped, direction: :stolen)
+      expect(result).to be_nil
+    end
+
+    it 'accepts :given direction' do
+      graph.record_reciprocity(agent_id: :a1, action: :helped, direction: :given)
+      expect(graph.reciprocity_ledger.size).to eq(1)
+    end
+
+    it 'accepts :received direction' do
+      graph.record_reciprocity(agent_id: :a1, action: :helped, direction: :received)
+      expect(graph.reciprocity_ledger.size).to eq(1)
     end
 
     it 'enforces RECIPROCITY_WINDOW' do

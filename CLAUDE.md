@@ -3,7 +3,7 @@
 **Level 3 Leaf Documentation**
 - **Parent**: `/Users/miverso2/rubymine/legion/extensions-agentic/CLAUDE.md`
 - **Gem**: `lex-social`
-- **Version**: `0.1.0`
+- **Version**: `0.1.1`
 - **Namespace**: `Legion::Extensions::Social`
 
 ## Purpose
@@ -107,3 +107,5 @@ All runners are in `Runners::Social`. The `Client` includes this module and owns
 - `REPUTATION_ALPHA = 0.1` — slow EMA means reputation changes gradually and resists sudden swings
 - Cohesion is stored per group; violations reduce it by a fixed 0.1; `update_cohesion` allows positive adjustments (cooperative exchanges)
 - Influence decay (`INFLUENCE_DECAY = 0.02`) per tick keeps the influence dimension from compounding without ongoing activity
+- `join_group` validates role against `ROLES` and members count against `MAX_GROUP_MEMBERS` (50)
+- `record_reciprocity` validates direction against `RECIPROCITY_DIRECTIONS` (`[:given, :received]`)
